@@ -23,10 +23,14 @@ def convert(r, theta, c):
 
 
 def img2polar(image, point, radians, min_radius, max_radius):
-    # 1) meshgrid parameter 1: Create an array with intervals from 0 to 2PI spread out over the Circumference of circle.
-    # 2) meshgrid parameter 2: Create an array with intervals from starting radius to final radius.
-    # theta, r = np.meshgrid(y,x)
+    # 1) meshgrid parameter 1: Create an array with intervals from 0 to 2PI spread out over the Circumference of
+    # circle.
+    # 2) meshgrid parameter 2: Create an array with intervals from starting radius to final radius. theta,
+    # r = np.meshgrid(y,x)
     # 3) meshgrid returns 2 grids of angles and radius.
+    # 4) Unwrap clockwise or counter-clockwise - Change angle interval in meshgrid from 0, 2PI to 2PI, 0 5)
+    # 5) Flip unwrap by setting radius start=min_radius, stop=max_radius, step = 1 OR start=max_radius, stop=min_radius, step = -1
+
     theta, r = np.meshgrid(np.linspace(0, 2 * np.pi, radians), np.arange(start=max_radius, stop=min_radius, step=-1, dtype=int), indexing='xy')
 
     # Convert Polar to Cartesian coordinates (Executes as vectors, One function call calculates all x,y coordinates for
