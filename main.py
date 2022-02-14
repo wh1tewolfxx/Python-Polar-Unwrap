@@ -1,21 +1,25 @@
-import cv2
-import numpy as np
-import time
-import Unwrap
-
+import cv2  # used to load and show image
+import math # used to calculate circumference
+import datetime # used to calculate execution time
+import Unwrap # unwrap function
 
 if __name__ == '__main__':
-    center = (752, 641)
-    radius = 400
-    circumference = int(2 * radius * np.pi)
+    center = (658, 531)  # Center of object to be unwrapped.
+    radius = 225  # Outer radius of object.
 
-    img = cv2.imread('test.jpg', 0)
+    circumference = int(2 * radius * math.pi)  # calculate circumference of circle from radius variable.
 
-    t0 = time.time()
-    polar = Unwrap.img2polar(img, center, circumference, 300, radius)
-    t1 = time.time()
+    img = cv2.imread('bearing.bmp', 0)  # read image from file
 
-    print(t1 - t0)
-    print("fps:" + str(1 / (t1 - t0)))
+    t0 = datetime.datetime.now()  # time before executing
+    polar = Unwrap.img2polar(img, center, circumference, 120, radius)  # polar unwrap function
+    t1 = datetime.datetime.now()  # time after executing
 
-    cv2.imwrite("unwrap.png", polar, params=None)
+    timedelta = t1 - t0  # time delta from t0 and t1
+    execution_time = float(timedelta.microseconds / 1000.00)  # convert execution time of microseconds to milliseconds
+
+    print(str(execution_time) + "ms")  # print execution time to console
+
+    cv2.imwrite("unwrap.png", polar, params=None)  # save unwrap image to file.
+    cv2.imshow("Unwrap", polar)  # show unwrapped image in new window.
+    cv2.waitKey()  # wait for user input (keeps console open)
