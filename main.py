@@ -1,7 +1,7 @@
 import cv2  # used to load and show image
-import math # used to calculate circumference
-import time # used to calculate execution time
-import Unwrap # unwrap function
+import math  # used to calculate circumference
+import time  # used to calculate execution time
+import Unwrap  # unwrap function
 
 if __name__ == '__main__':
     center = (658, 531)  # Center of object to be unwrapped.
@@ -16,9 +16,9 @@ if __name__ == '__main__':
     t1 = time.time_ns()  # time after executing
 
     timedelta = t1 - t0  # time delta from t0 and t1
-    execution_time = timedelta / 1000000# convert execution time of microseconds to milliseconds
+    execution_time = timedelta / 1000000  # convert execution time of nanoseconds to milliseconds
 
-    print("%.4f" % execution_time + "ms")  # print execution time to console
+    print("%.4f" % execution_time + "ms")  # print execution time to console. Sometimes execution is 0.0000ms due to caching?
 
     cv2.imwrite("unwrap.png", polar, params=None)  # save unwrap image to file.
     cv2.imshow("Unwrap", polar)  # show unwrapped image in new window.
