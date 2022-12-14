@@ -1,5 +1,5 @@
 import numpy as np
-
+import cv2
 
 # Numpy Definitions
 # linspace - Return evenly spaced numbers over a specified interval. (floats)
@@ -24,27 +24,20 @@ def convert(r, theta, c):
     return x, y
 
 
-def img2polar(image, point, radians, min_radius, max_radius):
-    # 1) meshgrid parameter 1: Create an array with intervals from 0 to 2PI spread out over the Circumference of
-    # circle.
-    # 2) meshgrid parameter 2: Create an array with intervals from starting radius to final radius.
-    # 3) theta, r = np.meshgrid(y,x) meshgrid returns 2 grids of angles and radius.
-    # 4) Unwrap clockwise or counter-clockwise - Change angle interval in meshgrid from 0, 2PI to 2PI, 0
-    # 5) Flip unwrap by setting radius start=min_radius, stop=max_radius, step = 1 OR start=max_radius, stop=min_radius, step = -1
+def polar_remap(image, point, radians, min_radius, max_radius, ccw, flip, interpolation):
 
-    theta, r = np.meshgrid(np.linspace(0, 2 * np.pi, radians), np.arange(start=max_radius, stop=min_radius, step=-1, dtype=int), indexing='xy')
-
-    # Convert Polar to Cartesian coordinates (Executes as vectors, One function call calculates all x,y coordinates for
-    # each point in grid)
-    x, y = convert(r, theta, point)
-
-    # if image has 3 channels (color)
-    if image.ndim == 3:
-        polar_img = image[y.astype(int), x.astype(int), :]
-
-    # if image has 1 channel (mono)
+    if ccw:
+        theta = np.linspace(2 * np.pi, 0, radians)[None, :].astype('float32')
     else:
-        polar_img = image[y.astype(int), x.astype(int)]
-        # print(x.astype(int)[0][0])
-        # print(polar_img[0,1])
-    return polar_img
+        theta = np.linspace(0, 2 * np.pi, radians)[None, :].astype('float32')
+
+    if flip:
+        r = np.arange(start=min_radius, stop=max_radius, step=1, dtype=int)[:, None].astype('float32')
+    else:
+        r = np.arange(start=max_radius, stop=min_radius, step=-1, dtype=int)[:, None].astype('float32')
+
+    x_map, y_map = convert(r, theta, point)
+
+    dst = cv2.remap(image, x_map, y_map, interpolation)
+
+    return dst
